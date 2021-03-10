@@ -69,7 +69,7 @@ app.post('/todos', checksExistsUserAccount, (request, response) => {
   }
   user.todos.push(todo);
 
-  return response.status(201).send();
+  return response.status(201).json(todo);
 });
 
 app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
@@ -78,16 +78,17 @@ app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
   const {user} = request;
   
   const todoAlready = user.todos.some((todo)=>todo.id ===id);
-  console.log(todoAlready);
+  
   if(!todoAlready){
-    response.status(400).json({error:"Todo not exists"});
+    response.status(404).json({error:"Todo not exists"});
   }
 
   const IndexTodoUser = user.todos.findIndex((todo)=>todo.id ===id);
   user.todos[IndexTodoUser].title = title
   user.todos[IndexTodoUser].deadline = new Date(deadline);
 
-  return response.status(201).send();
+  
+  return response.status(201).json(user.todos[IndexTodoUser]);
   
   
 });
@@ -98,15 +99,15 @@ app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
   const {user} = request;
   
   const todoAlready = user.todos.some((todo)=>todo.id ===id);
-  console.log(todoAlready);
+  
   if(!todoAlready){
-    response.status(400).json({error:"Todo not exists"});
+    response.status(404).json({error:"Todo not exists"});
   }
   const IndexTodoUser = user.todos.findIndex((todo)=>todo.id ===id);
   user.todos[IndexTodoUser].done = true
   
 
-  return response.status(201).send();
+  return response.status(201).json(user.todos[IndexTodoUser]);
 });
 
 app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
@@ -115,15 +116,15 @@ app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
   const {user} = request;
   
   const todoAlready = user.todos.some((todo)=>todo.id ===id);
-  console.log(todoAlready);
+  
   if(!todoAlready){
-    response.status(400).json({error:"Todo not exists"});
+    response.status(404).json({error:"Todo not exists"});
   }
   const IndexTodoUser = user.todos.findIndex((todo)=>todo.id ===id);
-  user.todos.splice(IndexTodoUser,IndexTodoUser);
+  user.todos.splice(IndexTodoUser,1);
   
 
-  return response.status(201).send();
+  return response.status(204).send();
 });
 
 module.exports = app;
